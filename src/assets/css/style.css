@@ -1,4 +1,5 @@
-* {
+*, body {
     font-family: Vazir, serif !important;
-    direction: rtl;
+    direction: rtl !important;
+    text-align: right !important;
 }

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  login
+  dashboard
 </template>
 
 <style scoped>
