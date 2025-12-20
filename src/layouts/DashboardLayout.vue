@@ -10,13 +10,30 @@ const drawer = ref(true);
       <v-navigation-drawer location="right" v-model="drawer">
         <v-list class="pt-0">
           <v-list-item
-              class="py-3 bg-deep-purple-lighten-4"
-              variant="tonal"
+              class="py-3 bg-deep-purple-lighten-5"
+              variant="flat"
               prepend-avatar="https://avatars.githubusercontent.com/u/26341440?v=4&quot"
               subtitle="مدیر سایت"
               title="توفیق حمزه ئی"
           ></v-list-item>
         </v-list>
+        <v-list
+            density="compact"
+            nav
+        >
+          <v-list-item prepend-icon="mdi-view-dashboard" value="داشبورد">
+            <v-list-item-title class="text-body-1 font-weight-regular">
+              داشبورد
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+        <template v-slot:append>
+          <div class="px-3 pb-5">
+            <v-btn block variant="elevated" class="bg-grey-darken-4">
+              خروج
+            </v-btn>
+          </div>
+        </template>
       </v-navigation-drawer>
       <v-app-bar scroll-threshold="439" color="primary">
         <template v-slot:prepend>
