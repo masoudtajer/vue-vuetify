@@ -47,7 +47,7 @@ const drawer = ref(true);
         </template>
       </v-app-bar>
       <router-view/>
-      <v-footer class="justify-center py-4" color="primary" app>
+      <v-footer class="justify-center items-center py-3" color="primary" app>
         <p>تمامی حقوق این سایت محفوظ میباشد.</p>
       </v-footer>
     </v-main>
