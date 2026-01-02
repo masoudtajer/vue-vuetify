@@ -1,89 +1,86 @@
 <script setup>
-import { onMounted, ref, shallowRef, toRef } from 'vue'
+import {onMounted, ref, shallowRef, toRef} from 'vue'
 
-const currentYear = new Date().getFullYear()
+const search = ref('');
 
-function createNewRecord () {
+function createNewRecord() {
   return {
-    title: '',
-    author: '',
-    genre: '',
-    year: currentYear,
-    pages: 1,
+    name: '',
+    email: '',
+    username: '',
+    gender: '',
   }
 }
 
-const books = ref([])
+const users = ref([])
 const formModel = ref(createNewRecord())
 const dialog = shallowRef(false)
 const isEditing = toRef(() => !!formModel.value.id)
 
 const headers = [
-  { title: 'Title', key: 'title', align: 'start' },
-  { title: 'Author', key: 'author' },
-  { title: 'Genre', key: 'genre' },
-  { title: 'Year', key: 'year', align: 'end' },
-  { title: 'Pages', key: 'pages', align: 'end' },
-  { title: 'Actions', key: 'actions', align: 'end', sortable: false },
+  {title: 'اسم', key: 'name', align: 'start'},
+  {title: 'ایمیل', key: 'email'},
+  {title: 'اسم کاربری', key: 'username'},
+  {title: 'جنسیت', key: 'gender'},
+  {title: 'عملیات', key: 'actions', align: 'center', sortable: false},
 ]
 
 onMounted(() => {
   reset()
 })
 
-function add () {
+function add() {
   formModel.value = createNewRecord()
   dialog.value = true
 }
 
-function edit (id) {
-  const found = books.value.find(book => book.id === id)
+function edit(id) {
+  const found = users.value.find(user => user.id === id)
 
   formModel.value = {
     id: found.id,
-    title: found.title,
-    author: found.author,
-    genre: found.genre,
-    year: found.year,
-    pages: found.pages,
+    name: found.name,
+    email: found.email,
+    username: found.username,
+    gender: found.gender,
   }
 
   dialog.value = true
 }
 
-function remove (id) {
-  const index = books.value.findIndex(book => book.id === id)
-  books.value.splice(index, 1)
+function remove(id) {
+  const index = users.value.findIndex(user => user.id === id)
+  users.value.splice(index, 1)
 }
 
-function save () {
+function save() {
   if (isEditing.value) {
-    const index = books.value.findIndex(book => book.id === formModel.value.id)
-    books.value[index] = formModel.value
+    const index = users.value.findIndex(user => user.id === formModel.value.id)
+    users.value[index] = formModel.value
   } else {
-    formModel.value.id = books.value.length + 1
-    books.value.push(formModel.value)
+    formModel.value.id = users.value.length + 1
+    users.value.push(formModel.value)
   }
 
   dialog.value = false
 }
 
-function reset () {
+function reset() {
   dialog.value = false
   formModel.value = createNewRecord()
-  books.value = [
-    { id: 1, title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', year: 1960, pages: 281 },
-    { id: 2, title: '1984', author: 'George Orwell', genre: 'Dystopian', year: 1949, pages: 328 },
-    { id: 3, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Fiction', year: 1925, pages: 180 },
-    { id: 4, title: 'Sapiens', author: 'Yuval Noah Harari', genre: 'Non-Fiction', year: 2011, pages: 443 },
-    { id: 5, title: 'Dune', author: 'Frank Herbert', genre: 'Sci-Fi', year: 1965, pages: 412 },
+  users.value = [
+    {id: 1, name: 'To Kill a Mockingbird', email: 'Harper Lee', username: 'Fiction', gender: 'مرد'},
+    {id: 2, name: '1984', email: 'George Orwell', username: 'Dystopian', gender: 'زن'},
+    {id: 3, name: 'The Great Gatsby', email: 'F. Scott Fitzgerald', username: 'Fiction', gender: 'مرد'},
+    {id: 4, name: 'Sapiens', email: 'Yuval Noah Harari', username: 'Non-Fiction', gender: 'زن'},
+    {id: 5, name: 'Dune', email: 'Frank Herbert', username: 'Sci-Fi', gender: 'مرد'},
   ]
 }
 </script>
 
 <template>
   <v-container max-width="1785">
-    <v-row justify="center">
+    <v-row >
       <v-col cols="12" sm=6 md="3">
         <v-card color="primary">
           <v-card-item>
@@ -125,93 +122,108 @@ function reset () {
         </v-card>
       </v-col>
     </v-row>
-    <v-sheet border rounded class="mt-5">
-      <v-data-table
-          :headers="headers"
-          :hide-default-footer="books.length < 11"
-          :items="books"
-      >
-        <template v-slot:top>
-          <v-toolbar flat color="white" extended class="pt-5 pa-3">
-            <template v-slot:prepend>
-              <div>
-                <p class="text-h4 font-weight-medium mb-5"> لیست کاربران</p>
+    <v-row class="mt-5">
+      <v-col cols="12">
+        <v-sheet border rounded class="px-4 py-5" :elevation="2">
+          <div class="d-flex flex-column flex-sm-row align-sm-center">
+            <p class="text-h4 font-weight-medium mb-5">لیست کاربران</p>
+            <v-spacer />
+            <v-btn
+                color="primary"
+                class="me-3"
+                append-icon="mdi-account-plus"
+                text="کاربر"
+                border
+                @click="add"
+            ></v-btn>
+            <v-btn
+                color="warning"
+                class="me-3 mt-2 mt-sm-0"
+                append-icon="mdi-backup-restore"
+                text="ریست"
+                border
+                @click="reset"
+            ></v-btn>
+            <v-text-field v-model="search" label="جستجو" variant="underlined" class="w-full mt-2 mt-sm-0"></v-text-field>
+          </div>
+          <v-data-table
+              :search="search"
+              :headers="headers"
+              :items="users"
+              items-per-page-text="تعداد در هر صفحه"
+              page-text="{0} تا {1} از {2}"
+              :items-per-page-options="[
+                { value: 5, title: '۵' },
+                { value: 10, title: '۱۰' },
+                { value: 25, title: '۲۵' },
+                { value: -1, title: 'همه' },
+              ]"
+              prev-icon="mdi-chevron-right"
+              next-icon="mdi-chevron-left"
+              first-icon="mdi-page-last"
+              last-icon="mdi-page-first"
+          >
+
+            <template #header.gender="{ column }">
+              <div class="d-flex align-center">
+                <span>{{ column.title }}</span>
+                <p class="text-blue mr-1 text-overline">(مرد/زن)</p>
               </div>
             </template>
 
-            <template v-slot:append>
+            <template v-slot:item.gender="{ item }">
+              <v-chip
+                  variant="flat"
+                  :color="item.gender === 'مرد' ? 'green' : 'red'"
+              >
+                {{ item.gender }}
+              </v-chip>
+            </template>
 
+            <template v-slot:item.actions="{ item }">
+              <div class="d-flex ga-2 justify-center">
+                <v-icon color="red" icon="mdi-delete" size="large" @click="remove(item.id)"></v-icon>
+                <v-icon color="warning" icon="mdi-pen" size="large" @click="edit(item.id)"></v-icon>
+              </div>
+            </template>
 
+            <template v-slot:no-data>
+              <div class="w-full">
                 <v-btn
-                    class="me-2"
-                    prepend-icon="mdi-plus"
+                    width="100%"
+                    append-icon="mdi-backup-restore"
                     rounded="lg"
-                    text="Add a Book"
+                    text="ریست"
+                    variant="text"
                     border
-                    @click="add"
+                    @click="reset"
                 ></v-btn>
-              <v-spacer />
-                <v-text-field label="Label" variant="underlined" class="w-full"></v-text-field>
-
+              </div>
             </template>
-
-          </v-toolbar>
-        </template>
-
-        <template v-slot:item.title="{ value }">
-          <v-chip :text="value" border="thin opacity-25" prepend-icon="mdi-book" label>
-            <template v-slot:prepend>
-              <v-icon color="medium-emphasis"></v-icon>
-            </template>
-          </v-chip>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-          <div class="d-flex ga-2 justify-end">
-            <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" @click="edit(item.id)"></v-icon>
-
-            <v-icon color="medium-emphasis" icon="mdi-delete" size="small" @click="remove(item.id)"></v-icon>
-          </div>
-        </template>
-
-        <template v-slot:no-data>
-          <v-btn
-              prepend-icon="mdi-backup-restore"
-              rounded="lg"
-              text="Reset data"
-              variant="text"
-              border
-              @click="reset"
-          ></v-btn>
-        </template>
-      </v-data-table>
-    </v-sheet>
-
-    <v-dialog v-model="dialog" max-width="500">
+          </v-data-table>
+        </v-sheet>
+      </v-col>
+    </v-row>
+    <v-dialog v-model="dialog" max-width="1000">
       <v-card
-          :subtitle="`${isEditing ? 'Update' : 'Create'} your favorite book`"
-          :title="`${isEditing ? 'Edit' : 'Add'} a Book`"
+          :title="`${isEditing ? 'ویرایش' : 'افزودن'} کاربر`"
       >
         <template v-slot:text>
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="formModel.title" label="Title"></v-text-field>
+              <v-text-field v-model="formModel.name" label="اسم"></v-text-field>
+            </v-col>
+
+            <v-col cols="12">
+              <v-text-field v-model="formModel.username" label="اسم کاربری"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-text-field v-model="formModel.author" label="Author"></v-text-field>
+              <v-text-field v-model="formModel.email" label="ایمیل"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-select v-model="formModel.genre" :items="['Fiction', 'Dystopian', 'Non-Fiction', 'Sci-Fi']" label="Genre"></v-select>
-            </v-col>
-
-            <v-col cols="12" md="6">
-              <v-number-input v-model="formModel.year" :max="currentYear" :min="1" label="Year"></v-number-input>
-            </v-col>
-
-            <v-col cols="12" md="6">
-              <v-number-input v-model="formModel.pages" :min="1" label="Pages"></v-number-input>
+              <v-select v-model="formModel.gender" :items="['مرد', 'زن']" label="جنسیت"></v-select>
             </v-col>
           </v-row>
         </template>
@@ -219,11 +231,11 @@ function reset () {
         <v-divider></v-divider>
 
         <v-card-actions class="bg-surface-light">
-          <v-btn text="Cancel" variant="plain" @click="dialog = false"></v-btn>
+          <v-btn text="لغو" variant="plain" @click="dialog = false"></v-btn>
 
           <v-spacer></v-spacer>
 
-          <v-btn text="Save" @click="save"></v-btn>
+          <v-btn text="ذخیره" @click="save"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
